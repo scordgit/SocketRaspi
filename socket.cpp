@@ -7,7 +7,6 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
-#include <time.h>
 
 #define PORT    50020
 
@@ -21,7 +20,7 @@ int main(int argc, char * argv[])
 
     char sendBuff[256];
     char recieveBuff[256];
-    time_t ticks;
+
 
     /*Set up socket, AF_INet for IPv4 and SOCK_DGRAM for UDP*/
     listenfd = socket(AF_INET, SOCK_DGRAM, 0);
