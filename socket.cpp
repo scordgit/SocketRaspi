@@ -14,7 +14,8 @@
 
 int main(int argc, char * argv[])
 {
-    int listenfd = 0, connfd = 0, NumBytes = 0, AddrLen = 0;
+    int listenfd = 0, connfd = 0, NumBytes = 0;
+    unsigned int AddrLen = 0;
     struct sockaddr_in serv_addr, other_addr;
     AddrLen = sizeof(other_addr);
 
@@ -57,15 +58,21 @@ int main(int argc, char * argv[])
 
     while(1)
     {
-        strcpy(&sendBuff, "Discover Target");
-        sendto(listenfd, &sendBuff[0], sizeof(sendBuff), 0 , (struct sockaddr*) &other_addr, sizeof(serv_addr);
+        strcpy(&sendBuff[0], "Discover Target");
 
+        #ifdef USE_SEND
+        if (sendto(listenfd, &sendBuff[0], sizeof(sendBuff), 0 , (struct sockaddr*) &other_addr, sizeof(other_addr)) == -1)
+        {
+            printf("Send Error : %s\n", strerror(errno));
+            return -4;
+        }
+        #endif
         /*Look for Recieve Packets*/
         NumBytes = recvfrom(listenfd, &recieveBuff[0], sizeof(recieveBuff), 0, (struct sockaddr*) &other_addr, &AddrLen);
         if (NumBytes > 0)
         {
             printf("Bytes Recieved : %d\n", NumBytes);
-            printf("Recieved packet from  IP %s : PORT %d\n", inet_ntoa(other_addr.sin_addr), ntohs(other_addr.sinport));
+            printf("Recieved packet from  IP %s : PORT %d\n", inet_ntoa(other_addr.sin_addr), ntohs(other_addr.sin_port));
             printf("Data: %s\n", recieveBuff);
         }
         else if (NumBytes == -1)
